@@ -47,7 +47,6 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) // Cria pro
 
 	catch (std::ifstream::failure error)
 	{
-
 		std::cout << "ERRO NO SHADER: ARQUIVO NÃO PODE SER LIDO :: FUNÇÃO SHADER()" << std::endl;
 	}
 
@@ -65,11 +64,15 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) // Cria pro
 	glShaderSource(vertex, 1, &vertexShaderCode, NULL);
 	glCompileShader(vertex);
 
+	debugCompilation(vertex, "Vertex Shader");
+
 	// Fragment shader
 
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, &fragmentShaderCode, NULL);
 	glCompileShader(fragment);
+
+	debugCompilation(fragment, "Fragment Shader");
 
 	// Program
 
@@ -124,7 +127,44 @@ void Shader::setMatrix4(const std::string &name, Matrix4 value) {
 	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &value.matrix[0]);
 }
 
+void Shader::setMatrix4(const std::string &name, glm::mat4 value) {
+
+	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+
 void Shader::setMatrix4(const std::string &name, Matrix4 value, GLuint shaderID) {
 
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, name.c_str()), 1, GL_FALSE, &value.matrix[0]);
+}
+
+void Shader::debugCompilation(GLuint shader, const char* actualShader) {
+
+	GLint result;
+
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+
+	if (GL_FALSE == result) {
+
+		std::cout << "ERRO AO COMPILAR " << actualShader << std::endl;
+		std::cout << getShaderInfoLog(shader) << std::endl;
+	}
+}
+
+std::string Shader::getShaderInfoLog(GLuint shader) {
+
+	GLint logLen; // Tamanho da mensagem de volta
+
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLen);	// Pega o tamanho da imagem
+
+	std::string log;	// A mensagem
+
+	if (logLen > 0) {
+
+		log.resize(logLen, ' '); // Faz o log agora ter o tamanho da mensagem
+
+		GLsizei written;
+		glGetShaderInfoLog(shader, logLen, &written, &log[0]);  // Passa a mensagem pro log
+	}
+
+	return log;
 }

@@ -10,6 +10,7 @@
 #include <Assimp/scene.h>
 #include <Assimp/postprocess.h>
 
+#include "FrameBuffer.h"
 #include "Camera.h"
 #include "Transform.h"
 
@@ -19,13 +20,25 @@ public:
 
 	Transform transform;
 
-	Model(const GLchar *path) { loadModel(path);
-								Shader newShader("bookVertexShader.vs", "bookFragmentShader.fs");
-								shader = newShader; }
-	
-	void use(Camera camera);   // Renderizar o model
+	Model(const GLchar *path, const char *shaderType);
+
+	void use(Camera camera, Vector3 lightPos);   // Renderizar o model
+	void shadedUse(Camera camera, Camera lightCamera, FrameBuffer depthMap, Vector3 lightPos);
+
+	void useModel(Camera camera); // Renderiza apenas o model !usar em sombras
+	void onlyDraw();
+
+	void changeDiffuseValue(float value) { objDiffuseValue = value; }
+	void changeSpecularValue(float value) { objSpecluarValue = value; }
+	void changeAmbientValue(float value) { objAmbientValue = value; }
+	void changeShininessValue(float value) { objShininessValue = value; }
 
 private:
+	
+	float objDiffuseValue = .7f;
+	float objSpecluarValue = .35f;
+	float objAmbientValue = 0.2f;
+	float objShininessValue = 64.f;
 
 	Shader shader;
 

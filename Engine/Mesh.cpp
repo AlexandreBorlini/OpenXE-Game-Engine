@@ -35,27 +35,26 @@ void Mesh::setMesh() {
 	glEnableVertexAttribArray(1); // Posição do Normal
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
-	//glEnableVertexAttribArray(1); // Posição da textura
-	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureCoordinates));
+	glEnableVertexAttribArray(2); // Posição da textura
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureCoordinates));
 
-	//glEnableVertexAttribArray(3); // Posição da tangente
-	//glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+	glEnableVertexAttribArray(3); // Posição da tangente
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
 
-	//glEnableVertexAttribArray(4); // Posição da bitangente
-	//glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
+	glEnableVertexAttribArray(4); // Posição da bitangente
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
 
 	glBindVertexArray(0);
 }
 
 void Mesh::draw(Shader shader) {
 
-
 	GLuint diffuseNmr = 1;  // Contador de texturas difusas
 	GLuint specularNmr = 1;	// Contador de texturas especulares
+	GLuint normalNr = 1;
 
 	for (GLuint i = 0; i < textures.size(); i++)
 	{
-
 		glActiveTexture(GL_TEXTURE0 + i); // Ativa a textura de número i
 
 		string number;
@@ -64,17 +63,17 @@ void Mesh::draw(Shader shader) {
 		if (name == "texture_diffuse")  // Se for tipo difusa
 			number = to_string(diffuseNmr++);
 		
-		else if(name == "texture_specular") // Se for do tipo especular
+		else if (name == "texture_specular") // Se for do tipo especular
 			number = to_string(specularNmr++);
+		
+		else if (name == "texture_normal")
+			number = std::to_string(normalNr++); // transfer unsigned int to stream
 
-		shader.setFloat(("material." + name + number).c_str(), i);
+		shader.setInt((name + number).c_str(), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].ID);
 	}
 
 	// renderizar
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-	
-	glBindVertexArray(0);			// Volta a apontar pro default
-	glActiveTexture(GL_TEXTURE0);
 }

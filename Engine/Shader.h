@@ -15,7 +15,6 @@
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
 
-
 class Shader
 {
 public:
@@ -46,5 +45,11 @@ public:
 	void setMatrix4( const std::string &name, Matrix4 value);
 	void setMatrix4(const std::string &name, Matrix4 value,	GLuint shaderID); // Seta uma matrix para o shader referido
 																			  // no ultimo argumento
+	void setMatrix4(const std::string &name, glm::mat4 value);
+
+private:
+
+	void debugCompilation(GLuint shader, const char* actualShader);
+	std::string getShaderInfoLog(GLuint shader);
 };
 

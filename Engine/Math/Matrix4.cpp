@@ -1,4 +1,5 @@
 #include "Matrix4.h"
+#include <iostream>
 
 Matrix4::Matrix4(GLfloat n) {
 
@@ -144,7 +145,11 @@ Matrix4 Matrix4::operator * (Matrix4 m) { // *
 
 	result.matrix[12] = matrix[12] * m.matrix[0] + matrix[13] * m.matrix[4] + matrix[14] * m.matrix[8] + matrix[15] * m.matrix[12];
 	result.matrix[13] = matrix[12] * m.matrix[1] + matrix[13] * m.matrix[5] + matrix[14] * m.matrix[9] + matrix[15] * m.matrix[13];
+
 	result.matrix[14] = matrix[12] * m.matrix[2] + matrix[13] * m.matrix[6] + matrix[14] * m.matrix[10] + matrix[15] * m.matrix[14];
+
+	result.matrix[14] /= 10;
+
 	result.matrix[15] = matrix[12] * m.matrix[3] + matrix[13] * m.matrix[7] + matrix[14] * m.matrix[11] + matrix[15] * m.matrix[15];
 
 	return result;

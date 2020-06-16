@@ -3,6 +3,7 @@
 #include <iostream>
 #include <glew.h>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ public:
 	Texture2D(const GLchar* texturePath);
 
 	unsigned int TextureFromFile(const char *path, const string &directory, bool gamma);
+	void loadCubemap(vector<string> faces);
 
 	void changeTexture(const GLchar* newTexturePath);
 	void use();

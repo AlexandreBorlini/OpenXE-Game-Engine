@@ -9,26 +9,22 @@ void Box::use(Camera cam) {
 	shader.setMatrix4("view", cam.view);
 
 	glm::mat4 view = glm::mat4(1.f);
-	glm::mat4 model = glm::mat4(1.f);
-
-	Matrix4 myModel = transform.getTransformResultMatrix();
-
 	view[3][2] = -3.f;
 
-	glm::vec4 worldLight = view * glm::vec4(.0f, .0f, 3.0f, 1.0f);
+	// Primeira luz
+	glm::vec4 worldLight = glm::vec4(.0f, .0f, 3.0f, .0f);
+	glUniform4fv(glGetUniformLocation(shader.ID, "Light[0].Position"), 1, &worldLight[0]);
 
-	glUniform4fv(glGetUniformLocation(shader.ID, "Light.Position"), 1, &worldLight[0]);
+	shader.setVector3( "Lights[0].Itensity", Vector3(0.f, 0.8f, 0.8f) );
 
-	shader.setVector3("Material.Kd", Vector3(0.9f, 0.5f, 0.3f));
-	shader.setVector3("Light.Ld", Vector3(1.0f, 1.0f, 1.0f));
+	shader.setVector4( "Light[0].Position", Vector4(3.f, 5.0f, 0.f, 1.f) );
+	shader.setVector3("Lights[0].Itensity", Vector3(0.8f, 0.f, 0.8f));
 
-	shader.setVector3("Material.Ka", Vector3(0.9f, 0.5f, 0.3f));
-	shader.setVector3("Light.La", Vector3(0.4f, 0.4f, 0.4f));
+	shader.setVector3("Kd", Vector3(0.9f, 0.5f, 0.3f));
+	shader.setVector3("Ka", Vector3(0.9f, 0.5f, 0.3f));
+	shader.setVector3("Ks", Vector3(0.8f, 0.8f, 0.8f));
 
-	shader.setVector3("Material.Ks", Vector3(0.8f, 0.8f, 0.8f));
-	shader.setVector3("Light.Ls", Vector3(1.0f, 1.0f, 1.0f));
-
-	shader.setFloat("Material.Shininess", 2.0f);
+	shader.setFloat("Shininess", 2.0f);
 
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);

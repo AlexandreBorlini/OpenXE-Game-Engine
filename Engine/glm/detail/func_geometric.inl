@@ -49,6 +49,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static T call(vec<3, T, Q> const& a, vec<3, T, Q> const& b)
 		{
+
 			vec<3, T, Q> tmp(a * b);
 			return tmp.x + tmp.y + tmp.z;
 		}

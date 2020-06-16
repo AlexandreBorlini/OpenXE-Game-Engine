@@ -31,22 +31,17 @@ Rectangle::Rectangle(GLfloat width, GLfloat height, GLfloat positionX, GLfloat p
 	transform.translate(positionX, positionY, positionZ);
 }
 
-void Rectangle::applyTransform() {
-
-	shader.use();
-
-	Matrix4 m;
-
-	m = transform.getTransformResultMatrix(); // Pega o conteúdo do transform e transforma em uma matriz
-	shader.setMatrix4("transform", m);		  // para ser usado pelo shader
-}
-
 void Rectangle::use(Camera camera) {
 
 	shader.use();
 
 	shader.setMatrix4("projection", camera.projection);
 	shader.setMatrix4("view", camera.view);
+
+	Matrix4 m;
+
+	m = transform.getTransformResultMatrix(); // Pega o conteúdo do transform e transforma em uma matriz
+	shader.setMatrix4("transform", m);		  // para ser usado pelo shader
 	
 	render.useData();
 	texture.use();

@@ -1,3 +1,4 @@
+#pragma once
 #include "Shader.h"
 #include "Transform.h"
 #include "Render/RenderData.h"
@@ -12,14 +13,16 @@ public:
 	Texture2D texture;
 	Transform transform;
 
+	Rectangle() {};
 	Rectangle(GLfloat width, GLfloat height, GLfloat positionX, GLfloat positionY, GLfloat positionZ, const GLchar *texture);
 
 	void applyTransform();
 	void use(Camera camera);
 
+	Shader shader;
+
 private:
 
-	Shader shader;
 	RenderData render;
 };
 

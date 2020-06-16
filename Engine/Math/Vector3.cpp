@@ -1,4 +1,5 @@
 #include "Vector3.h"
+#include <iostream>
 
 void Vector3::zero() { // Zera o vetor
 
@@ -122,7 +123,12 @@ float vector3Distance(const Vector3 vector01, const Vector3 vector02) { // Distâ
 
 float vector3DotProduct(const Vector3 vector01, const Vector3 vector02) {
 
-	return (vector01.vector[0] * vector02.vector[0] + vector01.vector[1] * vector02.vector[1] + vector01.vector[2] * vector02.vector[2]);
+	
+	float x = vector01.vector[0] * vector02.vector[0];
+	float y = vector01.vector[1] * vector02.vector[1];
+	float z = vector01.vector[2] * vector02.vector[2];
+		
+	return x + y + z;
 }
 
 Vector3 vector3CrossProduct(const Vector3 vector01, const Vector3 vector02) {

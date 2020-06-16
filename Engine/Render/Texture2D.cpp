@@ -1,11 +1,11 @@
 #include "Texture2D.h"
 
-#define STB_IMAGE_IMPLEMETATION
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 Texture2D::Texture2D(const GLchar* texturePath)
 {
-	
+
 	glGenTextures(1, &ID); // Gera textura
 	glBindTexture(GL_TEXTURE_2D, ID); // Liga a textura ao GL_TEXTURE
 
@@ -58,6 +58,7 @@ void Texture2D::changeTexture(const GLchar* texturePath) {
 
 unsigned int Texture2D::TextureFromFile(const char *path, const string &directory, bool gamma)
 {
+
 	string filename = string(path);
 	filename = directory + '/' + filename;
 
@@ -94,4 +95,33 @@ unsigned int Texture2D::TextureFromFile(const char *path, const string &director
 	}
 
 	return textureID;
+}
+
+// Carrega as 6 texturas do cubemap de uma vez
+void Texture2D::loadCubemap(vector<string> faces) {
+
+	glGenTextures(1, &ID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+
+	for (unsigned int i = 0; i < faces.size(); i++)
+	{
+
+		unsigned char *data = stbi_load( faces[i].c_str(), &width, &heigth, &channels, 0 );
+		if (data) {
+
+			glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, data );
+			stbi_image_free(data);
+		}
+		else {
+
+			std::cout << "FALHA AO CARREGAR CUBEMAP:: FUNÇÃO LOADCUBEMAP \n PATH: " << faces[i] << std::endl;
+			stbi_image_free(data);
+		}
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }

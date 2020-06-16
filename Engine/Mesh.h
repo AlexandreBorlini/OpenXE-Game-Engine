@@ -8,6 +8,7 @@
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 
+#include "Render/Texture2D.h"
 #include "Shader.h"
 
 using namespace std;

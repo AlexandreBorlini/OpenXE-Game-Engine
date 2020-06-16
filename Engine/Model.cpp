@@ -1,6 +1,18 @@
 #include "Model.h"
+#include "shaderSettings.h"
 
-void Model::use(Camera camera) {
+Model::Model(const GLchar *path, const char *shaderType) {
+
+	loadModel(path);
+
+	string vs = ".vs";
+	string fs = ".fs";
+
+	Shader newShader((shaderType + vs).c_str(), (shaderType + fs).c_str());
+	shader = newShader;
+}
+
+void Model::use(Camera camera, Vector3 lightPos) {
 
 	shader.use();
 
@@ -8,24 +20,76 @@ void Model::use(Camera camera) {
 	shader.setMatrix4("projection", camera.projection);
 	shader.setMatrix4("view", camera.view);
 
-	glm::mat4 view = glm::mat4(1.f);
+	shader.setVector3("Light.cameraPos", camera.getCameraPosition());
+	
+	// Primeira luz
+	shader.setVector3("Light.Position", lightPos);
 
-	view[3][2] = -3.f;
+	shader.setVector3("Light.diffuse", Vector3(.8f, .8f, .8f));
+	shader.setVector3("Light.ambient", Vector3(.0f, 0.0f, .0f));
+	shader.setVector3("Light.specular", Vector3(.2f, .2f, .2f));
 
-	glm::vec4 worldLight = view * glm::vec4(.0f, .0f, 3.0f, 1.0f);
+	shader.setFloat("Shininess", 40.f);
 
-	glUniform4fv(glGetUniformLocation(shader.ID, "Light.Position"), 1, &worldLight[0]);
+	Matrix4 viewProjMatrix = camera.view * camera.projection;
+	shader.setMatrix4("lightProjectionView", viewProjMatrix);
 
-	shader.setVector3("Material.Kd", Vector3(0.9f, 0.5f, 0.3f));
-	shader.setVector3("Light.Ld", Vector3(1.0f, 1.0f, 1.0f));
+	for (unsigned int i = 0; i < meshes.size(); i++) {
 
-	shader.setVector3("Material.Ka", Vector3(0.9f, 0.5f, 0.3f));
-	shader.setVector3("Light.La", Vector3(0.4f, 0.4f, 0.4f));
+		meshes[i].draw(shader);
+	}
 
-	shader.setVector3("Material.Ks", Vector3(0.8f, 0.8f, 0.8f));
-	shader.setVector3("Light.Ls", Vector3(1.0f, 1.0f, 1.0f));
+	glBindVertexArray(0);
+}
 
-	shader.setFloat("Material.Shininess", 2.0f);
+void Model::shadedUse(Camera camera, Camera lightCamera, FrameBuffer depthMap, Vector3 lightPosition) {
+	
+	shader.use();
+
+	shader.setInt("shadowMap", 5);
+
+	shader.setMatrix4("projection", camera.projection);
+	shader.setMatrix4("view", camera.view);
+
+	shader.setMatrix4("lightSpaceMatrix", lightCamera.view * lightCamera.projection);
+
+	// Primeira luz
+	shader.setVector3("Light.cameraPos", camera.getCameraPosition());
+	shader.setVector3("Light.Position", lightPosition);
+
+	shader.setVector3("Light.diffuse", Vector3(objDiffuseValue, objDiffuseValue, objDiffuseValue));
+	shader.setVector3("Light.ambient", Vector3(objAmbientValue, objAmbientValue, objAmbientValue));
+	shader.setVector3("Light.specular", Vector3(objSpecluarValue, objSpecluarValue, objSpecluarValue));
+
+	shader.setFloat("Shininess", objShininessValue);
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, depthMap.texture);
+
+	shader.setMatrix4("model", transform.getTransformResultMatrix());
+
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+
+		meshes[i].draw(shader);
+	}
+}
+
+void Model::useModel(Camera cam) {
+
+	//shader.use();
+
+	Matrix4 viewProjMatrix = cam.view * cam.projection;
+
+	shader.setMatrix4("lightProjectionView", viewProjMatrix);
+	shader.setMatrix4("model", transform.getTransformResultMatrix());
+
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+
+		meshes[i].draw(shader);
+	}
+}
+
+void Model::onlyDraw() {
 
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 
@@ -38,7 +102,7 @@ void Model::loadModel(string path) {
 	Assimp::Importer importer;		// Struct importer
 
 							 	    // Triangula o que não for triângulo   // Inverte Y das texturas que estiverem erradas
-	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs); // Lê o arquivo
+	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace); // Lê o arquivo
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 
@@ -104,10 +168,25 @@ Mesh Model::processMeshes( aiMesh *mesh, const aiScene *scene ) {				// Processa
 		else {
 
 			Vector2 vec(0.f, 0.f);
-			vertex.textureCoordinates = vec;									// Se não tiver texture coordinates deixa tudo como 0
+			vertex.textureCoordinates = vec;									// Se não tiver texture coordinates é texture map
 		}
 
-		vertices.push_back(vertex);												// Coloca o vértice no array de structs
+		
+			// Tangente
+			actVertexInformation.vector[0] = mesh->mTangents[i].x;
+			actVertexInformation.vector[1] = mesh->mTangents[i].y;
+			actVertexInformation.vector[2] = mesh->mTangents[i].z;
+
+			vertex.tangent = actVertexInformation;
+
+			// BiTangente
+			actVertexInformation.vector[0] = mesh->mBitangents[i].x;
+			actVertexInformation.vector[1] = mesh->mBitangents[i].y;
+			actVertexInformation.vector[2] = mesh->mBitangents[i].z;
+
+			vertex.bitangent = actVertexInformation;
+
+			vertices.push_back(vertex);									// Coloca o vértice no array de structs
 	}
 
 	// Indices
@@ -120,18 +199,21 @@ Mesh Model::processMeshes( aiMesh *mesh, const aiScene *scene ) {				// Processa
 	}
 
 	// Materials (se a textura é difusa ou especular)
-	if (mesh->mMaterialIndex >= 0) {																				// Se tiver algum material
 
-		aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];												// guarda o material
+	aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];												// guarda o material
 
-		// Guardar as texturas difusas em um vetor e colocar ele no vetor de texturas (primeiro declarado)
-		vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");		// Retorna um array de texturas do tipo especificado
-		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());									// e coloca no vetor de texturas dessa função
+	// Guardar as texturas difusas em um vetor e colocar ele no vetor de texturas (primeiro declarado)
+	vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");		// Retorna um array de texturas do tipo especificado
+	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());									// e coloca no vetor de texturas dessa função
 
 		// Mesma coisa com o especular
-		vector<Texture> specularMaps = loadMaterialTextures( material, aiTextureType_SPECULAR, "texture_specular");
-		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-	}
+	vector<Texture> specularMaps = loadMaterialTextures( material, aiTextureType_SPECULAR, "texture_specular");
+	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+	// com texture mapping
+	vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+	
 
 	return Mesh(vertices, indices, textures);										// Retorna um novo mesh com os dados colocados aqui
 }
