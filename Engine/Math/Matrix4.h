@@ -19,7 +19,7 @@ public:
 
 	Matrix4 identity(); // Retorna a matriz a identidade
 	void transpose(); // Cria a matriz transposta
-	void inverse();
+	//void inverse();
 
 	Matrix4 &operator = (const Matrix4 &matrix); // Operador "="
 	

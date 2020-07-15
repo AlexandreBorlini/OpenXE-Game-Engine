@@ -2,9 +2,9 @@
 
 Time::Time(){}
 
-GLfloat Time::getDeltaTime() {
+double Time::getDeltaTime() {
 
-	GLfloat deltaTime;
+	double deltaTime;
 
 	deltaTime = glfwGetTime();
 	deltaTime = deltaTime - lastUpdate;

@@ -14,6 +14,8 @@ float Vector3::length() { // Length do vetor
 
 	if (result > 0.f) // Não deixar dividir por zero
 		return sqrt(result); // Retorna a raiz
+	else
+		return -1;
 }
 
 void Vector3::normalize() { // Normaliza o vetor
@@ -51,15 +53,28 @@ Vector3 Vector3::operator - (const Vector3 &vector) const { // Operador "-"
 	return Vector3(this->vector[0] - vector.vector[0], this->vector[1] - vector.vector[1], this->vector[2] - vector.vector[2]);
 }
 
+
 Vector3 Vector3::operator * (const Vector3 &vector) { // Operador "*"
 
 	return Vector3(this->vector[0] * vector.vector[0], this->vector[1] * vector.vector[1], this->vector[2] * vector.vector[2]);
 }
 
+Vector3 Vector3::operator * (float magnitude) { // Operador "*" com floats
+
+	return Vector3(this->vector[0] * magnitude, this->vector[1] * magnitude, this->vector[2] * magnitude);
+}
+
+
 Vector3 Vector3::operator / (const Vector3 &vector) { // Operador "/"
 
 	return Vector3(this->vector[0] / vector.vector[0], this->vector[1] / vector.vector[1], this->vector[2] / vector.vector[2]);
 }
+
+Vector3 Vector3::operator / (float magnitude) { // Operador "/"
+
+	return Vector3(this->vector[0] / magnitude, this->vector[1] / magnitude, this->vector[2] / magnitude);
+}
+
 
 Vector3 &Vector3::operator += (const Vector3 &vector) { // Operador "+="
 
@@ -111,7 +126,6 @@ bool Vector3::operator != (const Vector3 &vector) { // Operador "!="
 
 float vector3Distance(const Vector3 vector01, const Vector3 vector02) { // Distância de dois Vector3
 
-	float distance;
 	float length;
 	Vector3 resultVector;
 

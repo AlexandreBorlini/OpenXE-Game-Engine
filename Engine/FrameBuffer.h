@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <glew.h>
-#include "Shader.h";
+#include "Shader.h"
 
 class FrameBuffer
 {

@@ -5,10 +5,10 @@ class Time
 {
 public:
 
-	GLfloat lastUpdate = 0.f;
+	double lastUpdate = 0.f;
 
 	Time();
 
-	GLfloat getDeltaTime(); // Pega o valor do deltaTime
+	double getDeltaTime(); // Pega o valor do deltaTime
 };
 

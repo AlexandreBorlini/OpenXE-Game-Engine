@@ -2,16 +2,16 @@
 
 void Transform::scale( GLfloat x, GLfloat y, GLfloat z) { // Escala a matriz com 3 floats
 
-	lenght = x;
-	height = y;
-	width = z;
+	scaleX = x;
+	scaleY = y;
+	scaleZ = z;
 }
 
 void Transform::scale(GLfloat n) { // Escala a matriz com 3 floats
 
-	lenght = n;
-	height = n;
-	width = n;
+	scaleX = n;
+	scaleY = n;
+	scaleZ = n;
 }
 
 void Transform::translate(GLfloat nx, GLfloat ny, GLfloat nz) { // Translate matrix
@@ -19,6 +19,29 @@ void Transform::translate(GLfloat nx, GLfloat ny, GLfloat nz) { // Translate mat
 	position.x += nx;
 	position.y += ny;
 	position.z += nz;
+}
+
+void Transform::translateLocal(GLfloat nx, GLfloat ny, GLfloat nz) {
+
+	Matrix4 rotationMatrix = quaternionToMatrix();
+	
+	Vector4 translateMatrix;
+	translateMatrix.x = nx;
+	translateMatrix.y = ny;
+	translateMatrix.z = nz;
+
+	Vector4 result = translateMatrix * rotationMatrix;
+
+	position.x += result.x;
+	position.y += result.y;
+	position.z += result.z;
+}
+
+void Transform::translate(Vector3 vector) { // Translate matrix
+
+	position.x += vector.vector[0];
+	position.y += vector.vector[1];
+	position.z += vector.vector[2];
 }
 
 void Transform::goTo( GLfloat nx, GLfloat ny, GLfloat nz) { // Vai até posição indicada
@@ -74,7 +97,6 @@ void Transform::localRotationZ(GLfloat angle) {
 	angle = degreesToRadians(angle);
 
 	Quaternion rotationQuat;
-
 	rotationQuat.rotateAboutZ(angle);
 
 	q *= rotationQuat; // Concatena multiplicando
@@ -131,9 +153,9 @@ Matrix4 Transform::getTransformResultMatrix() {
 	Matrix4 rotationMatrix;
 	Matrix4 translateMatrix;
 
-	scaleMatrix.matrix[0] = lenght;
-	scaleMatrix.matrix[5] = height;
-	scaleMatrix.matrix[10] = width;
+	scaleMatrix.matrix[0]  = scaleX;
+	scaleMatrix.matrix[5]  = scaleY;
+	scaleMatrix.matrix[10] = scaleZ;
 
 	rotationMatrix = quaternionToMatrix();
 
@@ -142,12 +164,60 @@ Matrix4 Transform::getTransformResultMatrix() {
 	translateMatrix.matrix[13] = position.y;
 	translateMatrix.matrix[14] = position.z;
 
-	translateMatrix.identity();
+	//translateMatrix.identity();
 
-	return scaleMatrix * rotationMatrix * translateMatrix;
+	Matrix4 result = scaleMatrix * rotationMatrix * translateMatrix;
+
+	return result;
 }
 
 GLfloat Transform::degreesToRadians(GLfloat degrees) {
 
 	return degrees * (3.141593f / 180);
+}
+
+Vector2 Transform::getLeftAndRightX() {
+
+	Vector2 result;
+	
+	result.vector[0] = position.x - (heightOver2 * scaleX);
+	result.vector[1] = position.x + (heightOver2 * scaleX);
+
+	return result;
+}
+
+Vector2 Transform::getLeftAndRightY() {
+
+
+	Vector2 result;
+
+	result.vector[0] = position.y - (heightOver2 * scaleY);
+	result.vector[1] = position.y + (heightOver2 * scaleY);
+
+	return result;
+}
+
+GLfloat Transform::getHeightOver2() {
+
+	return heightOver2;
+}
+
+GLfloat Transform::getWidthOver2() {
+
+	return widthOver2;
+}
+
+void Transform::changeHeightValue(float newHeight) {
+
+	heightOver2 = newHeight/2;
+}
+
+void Transform::changeWidthValue(float newWidth) {
+
+	widthOver2 = newWidth/2;
+}
+
+Vector3 Transform::getScale() {
+
+	return Vector3(scaleX, scaleY, scaleZ);
 }

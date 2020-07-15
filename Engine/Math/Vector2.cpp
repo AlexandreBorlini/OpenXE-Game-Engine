@@ -14,6 +14,8 @@ float Vector2::length() { // Length do vetor
 
 	if (result > 0.f) // Não deixar dividir por zero
 		return sqrt(result); // Retorna a raiz
+	else
+		return -1;
 }
 
 void Vector2::normalize() { // Normaliza o vetor
@@ -106,7 +108,6 @@ bool Vector2::operator != (const Vector2 &vector) { // Operador "!="
 
 float vector2Distance(const Vector2 vector01, const Vector2 vector02) { // Distância de dois Vector3
 
-	float distance;
 	float length;
 	Vector2 resultVector;
 

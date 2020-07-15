@@ -7,36 +7,39 @@ void Camera::ortho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLf
 	GLfloat width = right - left;
 	GLfloat height = top - bottom;
 
+	cameraPosition = Vector3( (width / 2) + left, (height/2) + bottom, 0.f );
+	cameraHalfSize = Vector2( width/2, height/2 );
+		
 	// Parte de escala da matriz
 
-	projection.matrix[0] = 2 / (width);					// 2/width pois a tela no Opengl vai de -1 a 1
-	projection.matrix[5] = 2 / (height);				// Portanto o tamanho é de 2 unidades
-	projection.matrix[10] = -2 / (zFar - zNear);		// Negativo pois a câmera sempre aponta para o Z negativo (oposto do world) 
+	projection.matrix[0] = 2 / (width);					
+	projection.matrix[5] = 2 / (height);				
+	projection.matrix[10] = -2 / (zFar - zNear);		
 
 	// Parte de translação
 
-	projection.matrix[12] = - (right + left)/ (width);				// Trazer a câmera para o centro X (para o centro ficar no 0)
-	projection.matrix[13] = - (top + bottom) / (height);			// Para o centro Y
-	projection.matrix[14] = - (zFar + zNear) / (zFar - zNear);		// Eo centro Z
+	projection.matrix[12] = - (right + left)/ (width);				
+	projection.matrix[13] = - (top + bottom) / (height);			
+	projection.matrix[14] = - (zFar + zNear) / (zFar - zNear);		
 }
 
 void Camera::perspective(GLfloat fov, GLfloat aspectRatio, GLfloat zNear, GLfloat zFar) { // Câmera de perspectiva
 
-	fov = fov * (3.141593f / 180);				// Transformar o ângulo em radianos
+	fov = fov * (3.141593f / 180);				
 
-	GLfloat halfAngleTan = tan(fov * 0.5f);		// pega a tangente do ângulo / 2
-	GLfloat farMnear = zFar - zNear;			// Tamanho do z
+	GLfloat halfAngleTan = tan(fov * 0.5f);		
+	GLfloat farMnear = zFar - zNear;			
 
-	projection.matrix[0] = 1 / (aspectRatio * halfAngleTan);	// 1 / pois estamos lidando com apenas metade da tela
-	projection.matrix[5] = 1 / (halfAngleTan);					// tanto que se divide o ângulo por 2
-																// multiplicação do aspect ratio pra deixar um quadrado quadrado numa tela retangular
+	projection.matrix[0] = 1 / (aspectRatio * halfAngleTan);	
+	projection.matrix[5] = 1 / (halfAngleTan);					
+																
 
-	projection.matrix[10] = -((zNear + zFar) / farMnear);		// Coloca o Z entre -1 e 1
-	projection.matrix[11] = -1;									// Necessário para que -z/(z) seja 1, ou seja, -z/-z, ele está nessa posição para não interferir nos outros
+	projection.matrix[10] = -((zNear + zFar) / farMnear);		
+	projection.matrix[11] = -1;									
 
-	projection.matrix[15] = 0;									// Tem que ser 0 para não interferir nos outros (e mostrar que é uma matriz projeção)
+	projection.matrix[15] = 0;									
 
-	projection.matrix[14] = -((2 * zFar * zNear) / farMnear);	// Também coloca o Z entre -1 e 1, (para entender porque duas diferentes faça sistema de equações)
+	projection.matrix[14] = -((2 * zFar * zNear) / farMnear);	
 
 	view.matrix[14] = -3.f;
 }

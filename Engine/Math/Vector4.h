@@ -1,4 +1,6 @@
 #pragma once
+#include "Matrix4.h"
+
 class Vector4
 {
 public:
@@ -25,6 +27,7 @@ public:
 	Vector4 operator + (const Vector4 &vector); // Operador "+" 
 	Vector4 operator - (const Vector4 &vector) const; // Operador "-"
 	Vector4 operator * (const Vector4 &vector); // Operador "*"
+	Vector4 operator * (const Matrix4 &matrix); // Operador "*" com matrizes
 	Vector4 operator / (const Vector4 &vector); // Operador "/"
 		  
 	Vector4 &operator += (const Vector4 &vector); // Operador "+=" 

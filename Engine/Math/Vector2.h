@@ -8,8 +8,6 @@ public:
 	// Variaveis
 
 	float vector[2]; // x : 0, y : 1
-	//float x = 0.f;
-	//float y = 0.f;
 	
 	// Constructor
 

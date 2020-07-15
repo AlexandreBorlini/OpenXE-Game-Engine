@@ -33,6 +33,9 @@ void Texture2D::use() {
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
 
+// Mudar a textura
+// No caso aqui muda a textura sem criar novo buffer
+// Usar o menos possível pois ele carrega tudo toda vez
 void Texture2D::changeTexture(const GLchar* texturePath) {
 
 	glBindTexture(GL_TEXTURE_2D, ID); // Liga a textura ao GL_TEXTURE
@@ -56,6 +59,16 @@ void Texture2D::changeTexture(const GLchar* texturePath) {
 	stbi_image_free(image);
 }
 
+// Muda a textura para uma já criada antes
+void Texture2D::changeTexture(Texture2D texture) {
+
+	// Só precisa mudar o ID
+	ID = texture.ID;
+}
+
+// Feita para carregar as texturas da pasta do objeto 3D
+// Usada no model
+// É criado um novo buffer cada vez que é chamado
 unsigned int Texture2D::TextureFromFile(const char *path, const string &directory, bool gamma)
 {
 
@@ -67,13 +80,18 @@ unsigned int Texture2D::TextureFromFile(const char *path, const string &director
 
 	int width, height, nrComponents;
 	unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+
 	if (data)
 	{
+
 		GLenum format;
+
 		if (nrComponents == 1)
 			format = GL_RED;
+
 		else if (nrComponents == 3)
 			format = GL_RGB;
+
 		else if (nrComponents == 4)
 			format = GL_RGBA;
 

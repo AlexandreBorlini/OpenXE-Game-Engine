@@ -16,7 +16,6 @@ public:
 	Rectangle() {};
 	Rectangle(GLfloat width, GLfloat height, GLfloat positionX, GLfloat positionY, GLfloat positionZ, const GLchar *texture);
 
-	void applyTransform();
 	void use(Camera camera);
 
 	Shader shader;

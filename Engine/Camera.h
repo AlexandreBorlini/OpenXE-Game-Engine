@@ -27,15 +27,19 @@ public:
 	void changeDistanceFromCenterBy(float distance);	 // Muda a distância até o centro por 'distance'
 
 	Vector3 getCameraPosition();
+	Vector2 getCameraHalfSize() { return cameraHalfSize; }
+	// FUNCAO DE MOVER CAMERA
 
 private:
+
+	Vector2 cameraHalfSize;
 
 	float yaw = 0.f;				// Rotação y da câmera
 	float pitch = 0.f;				// Rotação x da câmera
 	float distanceFromCenter = 6.f; // Distância do centro
 
 	Vector3 cameraPosition = Vector3(0.f, 0.f, 3.f);	// Posição mda câmera 
-	Vector3 center = Vector3(0.f, .0f, 0.f);			// Para onde está olhando
-	Vector3 up =     Vector3(0.f, 1.f, 0.f);			// Vetor "pra cima" da câmera
+	Vector3 center =		 Vector3(0.f, .0f, 0.f);	// Para onde está olhando
+	Vector3 up =			 Vector3(0.f, 1.f, 0.f);	// Vetor "pra cima" da câmera
 };
 

@@ -17,7 +17,8 @@ public:
 	Quaternion(GLfloat qw, GLfloat qx, GLfloat qy, GLfloat qz) : w(qw), x(qx), y(qy), z(qz) {}
 
 	void identity() { w = 1.f, x = y = z = 0.f; } // Volta o quaternion identidade
-	void negate() { w *= -1; x *= -1; y *= -1; z *= -1; } // Nega o quaternion
+	void negate() { w *= -1; x *= -1; y *= -1; z *= -1; }			  // Nega o quaternion
+	void negateButPositiveW() { w *= -1; x *= -1; y *= -1; z *= -1; } // Nega o quaternion mas deixa o W positivo
 
 	void normalize() { const float normalizeMult = 1.f / sqrt(x*x + y * y + z * z + w * w);
 	x *= normalizeMult; y *= normalizeMult; z *= normalizeMult; w *= normalizeMult;

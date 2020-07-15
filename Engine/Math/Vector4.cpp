@@ -16,6 +16,8 @@ float Vector4::length() { // Length do vetor
 
 	if (result > 0.f) // Não deixar dividir por zero
 		return sqrt(result); // Retorna a raiz
+	else
+		return 0;
 }
 
 void Vector4::normalize() { // Normaliza o vetor
@@ -59,6 +61,18 @@ Vector4 Vector4::operator - (const Vector4 &vector) const { // Operador "-"
 Vector4 Vector4::operator * (const Vector4 &vector) { // Operador "*"
 
 	return Vector4(x * vector.x, y * vector.y, z * vector.z, w * vector.w);
+}
+
+Vector4 Vector4::operator * (const Matrix4 &matrix) { // Operador "*"
+
+	Vector4 result;
+
+	result.x = (matrix.matrix[0] * x) + (matrix.matrix[4] * y) + (matrix.matrix[8]  * z) + (matrix.matrix[12] * w);
+	result.y = (matrix.matrix[1] * x) + (matrix.matrix[5] * y) + (matrix.matrix[9]  * z) + (matrix.matrix[13] * w);
+	result.z = (matrix.matrix[2] * x) + (matrix.matrix[6] * y) + (matrix.matrix[10] * z) + (matrix.matrix[14] * w);
+	result.w = (matrix.matrix[3] * x) + (matrix.matrix[7] * y) + (matrix.matrix[11] * z) + (matrix.matrix[15] * w);
+
+	return result;
 }
 
 Vector4 Vector4::operator / (const Vector4 &vector) { // Operador "/"
@@ -119,7 +133,6 @@ bool Vector4::operator != (const Vector4 &vector) { // Operador "!="
 
 float vector4Distance(const Vector4 vector01, const Vector4 vector02) { // Distância de dois Vector3
 
-	float distance;
 	float length;
 	Vector4 resultVector;
 

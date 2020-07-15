@@ -1,5 +1,4 @@
 #pragma once
-
 #include <cmath>
 
 class Vector3
@@ -35,7 +34,9 @@ public:
 	Vector3 operator + (const Vector3 &vector); // Operador "+" 
 	Vector3 operator - (const Vector3 &vector) const; // Operador "-"
 	Vector3 operator * (const Vector3 &vector); // Operador "*"
+	Vector3 operator * (float magnitude); // Operador "*" com floats
 	Vector3 operator / (const Vector3 &vector); // Operador "/"
+	Vector3 operator / (float magnitude); // Operador "/" com floats
 
 	Vector3 &operator += (const Vector3 &vector); // Operador "+=" 
 	Vector3 &operator -= (const Vector3 &vector); // Operador "-="

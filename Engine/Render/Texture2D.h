@@ -28,5 +28,6 @@ public:
 	void loadCubemap(vector<string> faces);
 
 	void changeTexture(const GLchar* newTexturePath);
+	void changeTexture(Texture2D texture);
 	void use();
 };
