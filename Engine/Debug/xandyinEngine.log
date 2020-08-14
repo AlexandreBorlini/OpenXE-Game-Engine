@@ -1,9 +1,2 @@
 ﻿  Main.cpp
-  Text.cpp
-  Window.cpp
-c:\users\pichau\source\repos\xandyinengine\xandyinengine\window.cpp(45): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
-c:\users\pichau\source\repos\xandyinengine\xandyinengine\window.cpp(46): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
-c:\users\pichau\source\repos\xandyinengine\xandyinengine\window.cpp(68): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-c:\users\pichau\source\repos\xandyinengine\xandyinengine\window.cpp(135): warning C4838: a conversão de 'FT_Pos' em 'unsigned int' requer uma conversão de restrição
-  Gerando Código...
   xandyinEngine.vcxproj -> C:\Users\Pichau\source\repos\xandyinEngine\Debug\xandyinEngine.exe
